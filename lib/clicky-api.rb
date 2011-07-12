@@ -3,7 +3,7 @@ require 'httparty'
 
 class ClickyAPI
   include HTTParty
-  base_uri "http://api.getclicky.com/api/stats/4"
+  BASE_URI  = "http://api.getclicky.com/api/stats/4"
   
   ## the list of acceptable API parameters -- unused at the moment
   @@PARAMS = %w{
@@ -22,13 +22,20 @@ class ClickyAPI
   
   ## params set to persist between calls.  keys are stringified.  this is
   ## a class variable -- global scope is in effect
-  @@set_params = nil
+  @set_params = nil
+
+
+  def initialize(param_hash=nil)
+    if !param_hash.nil?
+      set_params!(param_hash)
+    end
+  end
 
   ## load_config_file! is called from the Rails initializer.  This code might
   ## need to be re-run if you're using the "development" environment, and
   ## the file gets reloaded.  Gross.
-  def self.load_config_file!(file=nil)
-    @@set_params = {}
+  def load_config_file!(file=nil)
+    @set_params = {}
     if file.nil?
       if defined?(Rails)
         file = "#{Rails.root}/config/clicky-api.yml"
@@ -41,26 +48,26 @@ class ClickyAPI
   end
   
   ## the 'set_params!' method is used to set params persistently, class-wide
-  def self.set_params!(param_hash={})
-    self.load_config_file! if @@set_params.nil? ## development mode only
-    param_hash.each { |k,v| @@set_params[k.to_s] = v }
+  def set_params!(param_hash={})
+    load_config_file! if @set_params.nil? ## development mode only
+    param_hash.each { |k,v| @set_params[k.to_s] = v }
   end
   
   ## get_params returns the hash of params set by #set_params!
   ## it returns the hash directly, so make a copy if you want to avoid
   ## affecting other nearby ClickyAPI calls.
-  def self.get_params
-    @@set_params
+  def get_params
+    @set_params
   end
   
   ## the 'stats' method is used to obtain results.  I wanted to call it
   ## 'get' but the HTTParty module uses that method name.
-  def self.stats(param_hash={})
-    self.load_config_file! if @@set_params.nil? # development mode only
+  def stats(param_hash={})
+    load_config_file! if @set_params.nil? # development mode only
     
     ## merge parameters, converting keys to strings
     params = {}
-    @@set_params.each { |k,v| params[k.to_s] = v }
+    @set_params.each { |k,v| params[k.to_s] = v }
     param_hash.each   { |k,v| params[k.to_s] = v }
     
     ## allow 'type' param to take arrays; join values with commas
@@ -68,7 +75,7 @@ class ClickyAPI
       params['type'] = params['type'].map{|v| v.to_s}.join(',')
     end
     
-    return get('', :query => params).parsed_response['response']
+    return HTTParty::get(BASE_URI, :query => params).parsed_response['response']
   end 
   
 end
