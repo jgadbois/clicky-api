@@ -22,10 +22,10 @@ class ClickyAPI
   
   ## params set to persist between calls.  keys are stringified.  this is
   ## a class variable -- global scope is in effect
-  @set_params = nil
 
 
   def initialize(param_hash=nil)
+  @set_params = {}
     if !param_hash.nil?
       set_params!(param_hash)
     end
