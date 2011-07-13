@@ -49,7 +49,6 @@ class ClickyAPI
   
   ## the 'set_params!' method is used to set params persistently, class-wide
   def set_params!(param_hash={})
-    load_config_file! if @set_params.nil? ## development mode only
     param_hash.each { |k,v| @set_params[k.to_s] = v }
   end
   
