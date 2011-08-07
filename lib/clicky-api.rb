@@ -2,7 +2,6 @@ require 'rubygems'
 require 'active_support'
 require 'net/http'
 class ClickyAPI
-  include HTTParty
   BASE_URI  = "http://api.getclicky.com/api/stats/4"
   
   ## the list of acceptable API parameters -- unused at the moment
