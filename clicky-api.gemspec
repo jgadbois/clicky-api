@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{clicky-api}
-  s.version = "0.1"
+  s.version = "0.1.1"
   s.date = %q{2010-09-13}
   s.authors = ["pete gamache"]
   s.email = %q{gamache@gmail.com}
@@ -13,5 +13,5 @@ Gem::Specification.new do |s|
   ]
   s.test_file = 'test/test-suite.rb'
   
-  s.add_dependency('httparty')
+  s.add_dependency('activesupport')
 end

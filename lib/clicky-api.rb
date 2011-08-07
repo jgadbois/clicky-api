@@ -1,6 +1,6 @@
 require 'rubygems'
-require 'httparty'
-
+require 'activesupport'
+require 'net/http'
 class ClickyAPI
   include HTTParty
   BASE_URI  = "http://api.getclicky.com/api/stats/4"
@@ -27,6 +27,7 @@ class ClickyAPI
 
   def initialize(param_hash=nil)
     if !param_hash.nil?
+      param_hash[:output] = "json"
       set_params!(param_hash)
     end
   end
@@ -75,7 +76,19 @@ class ClickyAPI
       params['type'] = params['type'].map{|v| v.to_s}.join(',')
     end
     
-    return HTTParty::get(BASE_URI, :query => params).parsed_response['response']
+    query_string = params.collect{ |k,v| "#{k}=#{clicky_encode(v)}"}.join("&")
+    url = URI.parse(BASE_URI)
+    res = Net::HTTP.start(url.host, url.port) do |http|
+      http.get(url.path + "?" + query_string)
+    end
+    
+   return ActiveSupport::JSON.decode(res.body)[0]
   end 
-  
+ 
+
+  private
+    def clicky_encode(param)
+      param.gsub(" ", '+').gsub('/', '%3B').gsub('+%3B+', '%3B').downcase
+    end
+
 end
