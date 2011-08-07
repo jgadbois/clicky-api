@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'activesupport'
+require 'active_support'
 require 'net/http'
 class ClickyAPI
   include HTTParty
