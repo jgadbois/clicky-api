@@ -80,7 +80,7 @@ class ClickyAPI
       http.get(url.path + "?" + query_string)
     end
     
-   return ActiveSupport::JSON.decode(res.body)[0]
+   return ActiveSupport::JSON.decode(res.body)
   end 
  
 
